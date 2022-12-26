@@ -89,7 +89,7 @@ class NewVisitorTest(LiveServerTestCase):
         # Francis vistis the homepage. There is no sign of Edith's list
         self.browser.get(self.live_server_url)
         page_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertNotIn('Buy peacock feahters', page_text)
+        self.assertNotIn('Buy peacock feathers', page_text)
         self.assertNotIn('make a fly', page_text)
 
         # Francis starts a new list by entering a new item. He is less
@@ -106,7 +106,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Again, there is no trace of Edith's list
         page_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertNotIn('Buy peacock feahters', page_text)
+        self.assertNotIn('Buy peacock feathers', page_text)
         self.assertIn('Buy milk', page_text)
 
         # Satisfied, they go both to sleep
