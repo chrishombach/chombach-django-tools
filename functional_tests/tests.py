@@ -2,7 +2,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import WebDriverException, NoSuchElementException
 import time
 import unittest
 
@@ -153,3 +153,10 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # Progress"
         self.browser.find_element(By.ID, 'id_item_1_state_up').click()
         self.find_and_validate_state(1, 'In Progress')
+        # She leaves the shop and sets the item to "Done"
+        self.browser.find_element(By.ID, 'id_item_1_state_up').click()
+        self.find_and_validate_state(1, 'Done')
+        # After that she cannot find an icon to increase the state further
+        with self.assertRaises(NoSuchElementException) as context:
+            self.browser.find_element(By.ID, 'id_item_1_state_up').click()
+        self.assertTrue('Unable to locate element' in str(context.exception))

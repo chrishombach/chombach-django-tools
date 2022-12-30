@@ -16,5 +16,8 @@ class Item(models.Model):
                                default=ItemState.OPEN)
     state_text = models.CharField(max_length=12,default='')
     def save(self, *args, **kwargs):
-        self.state_text = dict(zip(self.ItemState.values, self.ItemState.labels))[self.state]
+        try:
+            self.state_text = dict(zip(self.ItemState.values, self.ItemState.labels))[self.state]
+        except KeyError:
+            raise KeyError( f'No state with State ID {self.state} defined!')
         super(Item, self).save(*args, **kwargs)

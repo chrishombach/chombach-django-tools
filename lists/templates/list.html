@@ -6,8 +6,10 @@
         {% for item in list.item_set.all %}
         <tr><td>{{ forloop.counter }}: {{ item.text }}</td>
             <td id='id_item_{{ forloop.counter }}_state'>{{item.state_text }}</td>
-            <td> <a id='id_item_{{ forloop.counter }}_state_up' 
-                    href="{% url 'state_up' list.id item.id %}">Up</a></td>
+            {% if item.state < 3 %}
+             <td> <a id='id_item_{{ forloop.counter }}_state_up' 
+              href="{% url 'state_up' list.id item.id %}">Up</a></td>
+            {% endif %}
         </tr>
         {% endfor %}
     </table>

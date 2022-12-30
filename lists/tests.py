@@ -117,12 +117,19 @@ class ItemStateTest(ItemTest):
 
     def test_increase_state(self):
         new_list, new_item = self.get_new_list_and_new_item()
-        self.client.post(f'/lists/{new_list.id}/{new_item.id}/state_up')
-        ## Need to call new_item again, as current new_item is a copy of the
-        ## database item and not a pointer to it.
-        new_item = Item.objects.get(id = new_item.id)
-        self.assertEqual(new_item.state, 2) 
-        self.assertEqual(new_item.state_text, 'In Progress')
+        for state, state_text in ((2, 'In Progress'), (3, 'Done')):
+            self.client.post(f'/lists/{new_list.id}/{new_item.id}/state_up')
+            ## Need to call new_item again, as current new_item is a copy of the
+            ## database item and not a pointer to it.
+            new_item = Item.objects.get(id = new_item.id)
+            self.assertEqual(new_item.state, state) 
+            self.assertEqual(new_item.state_text, state_text)
+
+    def test_item_cannot_extend_highest_state(self):
+        new_list, new_item = self.get_new_list_and_new_item()
+        new_item.state = 3
+        new_item.save()
+        self.assertRaises(KeyError, self.client.post, f'/lists/{new_list.id}/{new_item.id}/state_up')
 
     def test_redirect_after_increase_state(self):
         new_list, new_item = self.get_new_list_and_new_item()
