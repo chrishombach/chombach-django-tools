@@ -18,7 +18,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element(By.ID, 'id_list_table')
-        rows = table.find_elements(By.TAG_NAME,'tr')
+        rows = table.find_elements(By.TAG_NAME,'td')
         self.assertIn(row_text, [row.text for row in rows])
 
     def wait_for_row_in_list_table(self, row_text):
@@ -130,3 +130,26 @@ class NewVisitorTest(StaticLiveServerTestCase):
             inputbox.location['x'] + inputbox.size['width'] / 2,
            512,
            delta=25)
+
+    def find_and_validate_state(self, item_index, state_to_compare):
+        state = self.browser.find_element(By.ID, f'id_item_{item_index}_state').text
+        self.assertEqual(state, state_to_compare)
+
+    def test_item_state_and_workflow(self):
+        # Edith starts a new to-do list and enters two items
+        self.browser.get(self.live_server_url)
+        item_texts = ['Buy peacock feathers', 'comb peacock feathers']
+        for i, item_text in enumerate(item_texts):
+            inputbox = self.browser.find_element(By.ID,'id_new_item')
+            inputbox.send_keys(item_text)
+            inputbox.send_keys(Keys.ENTER)
+            item_index = i + 1
+            self.wait_for_row_in_list_table(f'{item_index}: {item_text}')
+
+        # The new items are in the open state
+        for i in range(1,3):
+            self.find_and_validate_state(i, 'Open')
+        # She starts buying feathers and sets the first item to "In
+        # Progress"
+        self.browser.find_element(By.ID, 'id_item_1_state_up').click()
+        self.find_and_validate_state(1, 'In Progress')
