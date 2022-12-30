@@ -135,3 +135,27 @@ class ItemStateTest(ItemTest):
         new_list, new_item = self.get_new_list_and_new_item()
         response = self.client.post(f'/lists/{new_list.id}/{new_item.id}/state_up')
         self.assertRedirects(response, f'/lists/{new_list.id}/')
+
+    def test_decrease_state(self):
+        new_list, new_item = self.get_new_list_and_new_item()
+        new_item.state = 3
+        new_item.save()
+        for state, state_text in ((2, 'In Progress'), (1, 'Open')):
+            self.client.post(f'/lists/{new_list.id}/{new_item.id}/state_down')
+            ## Need to call new_item again, as current new_item is a copy of the
+            ## database item and not a pointer to it.
+            new_item = Item.objects.get(id = new_item.id)
+            self.assertEqual(new_item.state, state) 
+            self.assertEqual(new_item.state_text, state_text)
+
+    def test_item_cannot_extend_lowest(self):
+        new_list, new_item = self.get_new_list_and_new_item()
+        new_item.state = 0
+        new_item.save()
+        self.assertRaises(KeyError, self.client.post,
+                          f'/lists/{new_list.id}/{new_item.id}/state_down')
+
+    def test_redirect_after_decrease_state(self):
+        new_list, new_item = self.get_new_list_and_new_item()
+        response = self.client.post(f'/lists/{new_list.id}/{new_item.id}/state_down')
+        self.assertRedirects(response, f'/lists/{new_list.id}/')

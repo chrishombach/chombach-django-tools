@@ -10,6 +10,10 @@
              <td> <a id='id_item_{{ forloop.counter }}_state_up' 
               href="{% url 'state_up' list.id item.id %}">Up</a></td>
             {% endif %}
+            {% if item.state > 1 %}
+            <td> <a id='id_item_{{ forloop.counter }}_state_down' 
+              href="{% url 'state_down' list.id item.id %}">Down</a></td>
+            {% endif %}
         </tr>
         {% endfor %}
     </table>

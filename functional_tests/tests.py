@@ -160,3 +160,16 @@ class NewVisitorTest(StaticLiveServerTestCase):
         with self.assertRaises(NoSuchElementException) as context:
             self.browser.find_element(By.ID, 'id_item_1_state_up').click()
         self.assertTrue('Unable to locate element' in str(context.exception))
+        # She now goes back to the shop since these have not been the right
+        # feathers and sets the state to In Progress again
+        self.browser.find_element(By.ID, 'id_item_1_state_down').click()
+        self.find_and_validate_state(1, 'In Progress')
+        # She returns the feathers and decides to buy them again later. She
+        # sets the state to Open
+        self.browser.find_element(By.ID, 'id_item_1_state_down').click()
+        self.find_and_validate_state(1, 'Open')
+        # Finally, she decides that she does not need any feathers at all and
+        # deletes the item
+
+        self.browser.find_element(By.ID, 'id_item_1_state_delete').click()
+        self.find_and_validate_state(1, 'Done')
