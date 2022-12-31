@@ -2,23 +2,31 @@
 {% block header_text %}Your To-Do list {% endblock %}
 {% block form_action %}/lists/{{ list.id }}/add_item{% endblock %}
 {% block table %}
-    <table id='id_list_table' class="table">
-        {% for item in list.item_set.all %}
-        <tr><td>{{ forloop.counter }}: {{ item.text }}</td>
-            <td id='id_item_{{ forloop.counter }}_state'>{{item.state_text }}</td>
+    <div id='id_list_table' class="container">
+        {% for item_selection in filtered_items %}
+        {% with state_id=forloop.counter %}
+        <div class="col-sm-3">
+            {% for item in item_selection %}
+            <table>
+            <tr><td>{{ forloop.counter }}: {{ item.text }}</td>
+                <td id='id_item_{{ forloop.counter }}_{{ state_id }}_state'>{{item.state_text }}</td>
             {% if item.state < 3 %}
-             <td> <a id='id_item_{{ forloop.counter }}_state_up' 
+             <td> <a id='id_item_{{ forloop.counter }}_{{ state_id }}_state_up' 
               href="{% url 'state_up' list.id item.id %}">Up</a></td>
             {% endif %}
             {% if item.state > 1 %}
-            <td> <a id='id_item_{{ forloop.counter }}_state_down' 
+            <td> <a id='id_item_{{ forloop.counter }}_{{ state_id }}_state_down' 
               href="{% url 'state_down' list.id item.id %}">Down</a></td>
             {% endif %}
             {% if item.state != 0 %}
-            <td> <a id='id_item_{{ forloop.counter }}_delete_item' 
+            <td> <a id='id_item_{{ forloop.counter }}_{{ state_id }}_delete_item' 
               href="{% url 'delete_item' list.id item.id %}">Delete</a></td>
             {% endif %}
-        </tr>
+            </tr>
+            </table>
+            {% endfor %}
+        </div>
+        {% endwith %}
         {% endfor %}
-    </table>
+    </div>
 {% endblock %}

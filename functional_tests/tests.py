@@ -131,8 +131,13 @@ class NewVisitorTest(StaticLiveServerTestCase):
            512,
            delta=25)
 
-    def find_and_validate_state(self, item_index, state_to_compare):
-        state = self.browser.find_element(By.ID, f'id_item_{item_index}_state').text
+    def find_and_validate_state(self, item_index, state_id):
+        state_to_compare = {0: 'Deleted',
+                            1: 'Open',
+                            2: 'In Progress',
+                            3: 'Done'}[state_id]
+        state = self.browser.find_element(By.ID,
+                                          f'id_item_{item_index}_{state_id}_state').text
         self.assertEqual(state, state_to_compare)
 
     def test_item_state_and_workflow(self):
@@ -148,28 +153,28 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # The new items are in the open state
         for i in range(1,3):
-            self.find_and_validate_state(i, 'Open')
+            self.find_and_validate_state(i, 1)
         # She starts buying feathers and sets the first item to "In
         # Progress"
-        self.browser.find_element(By.ID, 'id_item_1_state_up').click()
-        self.find_and_validate_state(1, 'In Progress')
+        self.browser.find_element(By.ID, 'id_item_1_1_state_up').click()
+        self.find_and_validate_state(1, 2)
         # She leaves the shop and sets the item to "Done"
-        self.browser.find_element(By.ID, 'id_item_1_state_up').click()
-        self.find_and_validate_state(1, 'Done')
+        self.browser.find_element(By.ID, 'id_item_1_2_state_up').click()
+        self.find_and_validate_state(1, 3)
         # After that she cannot find an icon to increase the state further
         with self.assertRaises(NoSuchElementException) as context:
-            self.browser.find_element(By.ID, 'id_item_1_state_up').click()
+            self.browser.find_element(By.ID, 'id_item_1_3_state_up').click()
         self.assertTrue('Unable to locate element' in str(context.exception))
         # She now goes back to the shop since these have not been the right
         # feathers and sets the state to In Progress again
-        self.browser.find_element(By.ID, 'id_item_1_state_down').click()
-        self.find_and_validate_state(1, 'In Progress')
+        self.browser.find_element(By.ID, 'id_item_1_3_state_down').click()
+        self.find_and_validate_state(1, 2)
         # She returns the feathers and decides to buy them again later. She
         # sets the state to Open
-        self.browser.find_element(By.ID, 'id_item_1_state_down').click()
-        self.find_and_validate_state(1, 'Open')
+        self.browser.find_element(By.ID, 'id_item_1_2_state_down').click()
+        self.find_and_validate_state(1, 1)
         # Finally, she decides that she does not need any feathers at all and
-        # deletes the item
+        # deletes the item -> It is not shown anymore!
 
-        self.browser.find_element(By.ID, 'id_item_1_delete_item').click()
-        self.find_and_validate_state(1, 'Deleted')
+        self.browser.find_element(By.ID, 'id_item_1_1_delete_item').click()
+        #self.find_and_validate_state(1, 0)

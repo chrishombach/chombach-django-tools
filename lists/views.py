@@ -8,7 +8,13 @@ def home_page(request):
 
 def view_list(request, list_id: int):
     list_ = List.objects.get(id=list_id)
-    return render(request, 'list.html', {'list': list_})
+    open_items = list_.item_set.filter(state=3)
+    filtered_items = [list_.item_set.filter(state=_state) for _state in
+                      range(1,4)]
+    states = ['Open','In Progress','Done']
+    return render(request, 'list.html', {'list': list_, 
+                                         'filtered_items': filtered_items,
+                                         'states': states})
 
 def new_list(request):
     list_ = List.objects.create()
