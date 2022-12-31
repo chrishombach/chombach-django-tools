@@ -159,3 +159,15 @@ class ItemStateTest(ItemTest):
         new_list, new_item = self.get_new_list_and_new_item()
         response = self.client.post(f'/lists/{new_list.id}/{new_item.id}/state_down')
         self.assertRedirects(response, f'/lists/{new_list.id}/')
+
+    def test_delete_item(self):
+        new_list, new_item = self.get_new_list_and_new_item()
+        self.client.post(f'/lists/{new_list.id}/{new_item.id}/delete_item')
+        new_item = Item.objects.get(id = new_item.id)
+        self.assertEqual(new_item.state, 0) 
+        self.assertEqual(new_item.state_text, 'Deleted')
+        
+    def test_redirect_after_delete_item(self):
+        new_list, new_item = self.get_new_list_and_new_item()
+        response = self.client.post(f'/lists/{new_list.id}/{new_item.id}/delete_item')
+        self.assertRedirects(response, f'/lists/{new_list.id}/')

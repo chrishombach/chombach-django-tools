@@ -31,3 +31,9 @@ def state_down(request, list_id: int, item_id: int):
     item.state -= 1
     item.save()
     return redirect(f'/lists/{list_id}/')
+
+def delete_item(request, list_id: int, item_id: int):
+    item = Item.objects.get(id=item_id)
+    item.state = 0
+    item.save()
+    return redirect(f'/lists/{list_id}/')

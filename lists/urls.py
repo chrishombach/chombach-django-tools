@@ -23,4 +23,6 @@ urlpatterns = [
     path('<int:list_id>/<int:item_id>/state_up', views.state_up, name='state_up'),
     path('<int:list_id>/<int:item_id>/state_down', views.state_down,
          name='state_down'),
+    path('<int:list_id>/<int:item_id>/delete_item', views.delete_item,
+         name='delete_item'),
 ]

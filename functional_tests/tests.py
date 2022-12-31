@@ -171,5 +171,5 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # Finally, she decides that she does not need any feathers at all and
         # deletes the item
 
-        self.browser.find_element(By.ID, 'id_item_1_state_delete').click()
-        self.find_and_validate_state(1, 'Done')
+        self.browser.find_element(By.ID, 'id_item_1_delete_item').click()
+        self.find_and_validate_state(1, 'Deleted')
