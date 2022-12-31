@@ -54,7 +54,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # When she hits enter, the page updates, and now the page lists 
         # "1: Buy peacock feathers" as an item in a to-do list table
         inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('1: Buy peacock feathers')
+        self.wait_for_row_in_list_table('Buy peacock feathers')
         # There is still a text box inviting her to add another item. She
         # enters "Use peacock feathers to make a fly" (Edith is very
         # methodical)
@@ -63,8 +63,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
         inputbox.send_keys(Keys.ENTER)
 
         # The page updates again, and now shows both items on her list
-        self.wait_for_row_in_list_table('2: Use peacock feathers to make a fly')
-        self.wait_for_row_in_list_table('1: Buy peacock feathers')
+        self.wait_for_row_in_list_table('Use peacock feathers to make a fly')
+        self.wait_for_row_in_list_table('Buy peacock feathers')
 
         # Satisfied, she goes back to sleep
 
@@ -74,7 +74,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         inputbox = self.browser.find_element(By.ID,'id_new_item')
         inputbox.send_keys('Buy peacock feathers')
         inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('1: Buy peacock feathers')
+        self.wait_for_row_in_list_table('Buy peacock feathers')
 
         # She notices that her list has a unique URL
         edith_list_url = self.browser.current_url
@@ -97,7 +97,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         inputbox = self.browser.find_element(By.ID, 'id_new_item')
         inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('1: Buy milk')
+        self.wait_for_row_in_list_table('Buy milk')
 
         # Francis gets his own unique URL
         francis_list_url = self.browser.current_url
@@ -124,7 +124,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
        # She starts a new list and sees the input is nicely centered there too
        inputbox.send_keys('testing')
        inputbox.send_keys(Keys.ENTER)
-       self.wait_for_row_in_list_table('1: testing')
+       self.wait_for_row_in_list_table('testing')
        inputbox = self.browser.find_element(By.ID, 'id_new_item')
        self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
@@ -149,7 +149,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
             inputbox.send_keys(item_text)
             inputbox.send_keys(Keys.ENTER)
             item_index = i + 1
-            self.wait_for_row_in_list_table(f'{item_index}: {item_text}')
+            self.wait_for_row_in_list_table(f'{item_text}')
 
         # The new items are in the open state
         for i in range(1,3):

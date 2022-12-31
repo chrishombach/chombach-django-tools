@@ -1,0 +1,9 @@
+#id_new_item {
+    margin-top: 15px;
+}
+.item_box {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 4px;
+}

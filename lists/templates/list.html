@@ -3,27 +3,41 @@
 {% block form_action %}/lists/{{ list.id }}/add_item{% endblock %}
 {% block table %}
     <div id='id_list_table' class="container">
-        {% for item_selection in filtered_items %}
+        {% for state_text, item_selection in filtered_items.items %}
         {% with state_id=forloop.counter %}
-        <div class="col-sm-3">
+        <div class="col-lg-2">
+            <h2>{{ state_text }}</h2>
             {% for item in item_selection %}
-            <table>
-            <tr><td>{{ forloop.counter }}: {{ item.text }}</td>
-                <td id='id_item_{{ forloop.counter }}_{{ state_id }}_state'>{{item.state_text }}</td>
-            {% if item.state < 3 %}
-             <td> <a id='id_item_{{ forloop.counter }}_{{ state_id }}_state_up' 
-              href="{% url 'state_up' list.id item.id %}">Up</a></td>
-            {% endif %}
+            <div class="item_box">
+            <table class="table-condensed">
+            <tr><td colspan="3">{{ item.text }}</td>
+            </tr><tr>
+                <td colspan="3" id='id_item_{{ forloop.counter }}_{{ state_id }}_state'>{{item.state_text }}</td>
+            </tr><tr>
             {% if item.state > 1 %}
             <td> <a id='id_item_{{ forloop.counter }}_{{ state_id }}_state_down' 
-              href="{% url 'state_down' list.id item.id %}">Down</a></td>
+              href="{% url 'state_down' list.id item.id %}"><span
+                  class="glyphicon glyphicon-chevron-left"></span></a></td>
+            {% else %}
+            <td></td>
             {% endif %}
             {% if item.state != 0 %}
             <td> <a id='id_item_{{ forloop.counter }}_{{ state_id }}_delete_item' 
-              href="{% url 'delete_item' list.id item.id %}">Delete</a></td>
+              href="{% url 'delete_item' list.id item.id %}"><span
+                  class="glyphicon glyphicon-remove"></span></a></td>
+            {% else %}
+            <td></td>
+            {% endif %}
+            {% if item.state < 3 %}
+             <td> <a id='id_item_{{ forloop.counter }}_{{ state_id }}_state_up' 
+                     href="{% url 'state_up' list.id item.id %}">
+                  <span class="glyphicon glyphicon-chevron-right"></span></a></td>
+            {% else %}
+            <td></td>
             {% endif %}
             </tr>
             </table>
+            </div>
             {% endfor %}
         </div>
         {% endwith %}

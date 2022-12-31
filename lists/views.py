@@ -12,6 +12,7 @@ def view_list(request, list_id: int):
     filtered_items = [list_.item_set.filter(state=_state) for _state in
                       range(1,4)]
     states = ['Open','In Progress','Done']
+    filtered_items = dict(zip(states, filtered_items))
     return render(request, 'list.html', {'list': list_, 
                                          'filtered_items': filtered_items,
                                          'states': states})
