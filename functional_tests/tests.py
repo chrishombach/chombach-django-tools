@@ -105,6 +105,17 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.check_for_row_in_list_table('Use peacock feathers to make a fly')
         self.check_for_row_in_list_table('Buy peacock feathers')
 
+        # She navigates back to the home page
+        self.browser.find_element(By.ID, 'nav_home').click()
+        header_text = self.browser.find_element(By.TAG_NAME,'h1').text
+        self.assertIn('To-Do', header_text)
+
+        # Here she can find that her new list is listed in the overview table
+        self.check_for_row_in_list_overview('Flyfishing List')
+        # She can finds a link to her table and the two items are still shown
+        self.browser.find_element(By.ID, 'link_lists_1').click()
+        self.check_for_row_in_list_table('Use peacock feathers to make a fly')
+        self.check_for_row_in_list_table('Buy peacock feathers')
         # Satisfied, she goes back to sleep
 
     def test_multiple_users_can_start_lists_at_different_urls(self):
