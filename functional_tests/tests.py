@@ -16,21 +16,37 @@ class NewVisitorTest(StaticLiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
+    def wait_for_browser_action(browser_action):
+        def inner_function(*args, **kwargs):
+            start_time = time.time()
+            while True:
+                try:
+                    browser_action(*args, **kwargs)
+                    return
+                except (AssertionError, WebDriverException) as e:
+                    if time.time() - start_time > MAX_WAIT:
+                        raise e
+                    time.sleep(0.5)
+        return inner_function
+
+    @wait_for_browser_action
+    def check_for_header_in_list_table(self, row_text):
+        table = self.browser.find_element(By.ID, 'id_list_table')
+        rows = table.find_elements(By.TAG_NAME,'h2')
+        self.assertIn(row_text, [row.text for row in rows])
+
+    @wait_for_browser_action
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element(By.ID, 'id_list_table')
         rows = table.find_elements(By.TAG_NAME,'td')
         self.assertIn(row_text, [row.text for row in rows])
 
-    def wait_for_row_in_list_table(self, row_text):
-        start_time = time.time()
-        while True:
-            try:
-                self.check_for_row_in_list_table(row_text)
-                return
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.5)
+    @wait_for_browser_action
+    def check_for_row_in_list_overview(self, row_text):
+        list_overview = self.browser.find_element(By.ID, 'id_list_overview_table')
+        rows = list_overview.find_elements(By.TAG_NAME,'td')
+        self.assertIn(row_text, [row.text for row in rows])
+
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         # Edith has heard about a cool new online to-do app. She goes to check out its
@@ -41,6 +57,29 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('To-Do', self.browser.title)
         header_text = self.browser.find_element(By.TAG_NAME,'h1').text
         self.assertIn('To-Do', header_text)
+        # She sees a list with all existing lists and it has at least a header
+        # row
+        self.check_for_row_in_list_overview('To-Do Lists')
+
+        # By entering the name of the new list, she adds a new list.
+        inputbox = self.browser.find_element(By.ID,'id_new_list')
+        self.assertEqual(
+            inputbox.get_attribute('placeholder'),
+            'Enter a new to-do list'
+        )
+        inputbox.send_keys('Flyfishing List')
+
+        # When she hits enter, she is directed to the lists page with no items
+        # in it. The name of the list appears in the pages Headerline.
+        inputbox.send_keys(Keys.ENTER)
+        header_text = self.browser.find_element(By.TAG_NAME,'h1').text
+        self.assertIn('Flyfishing List', header_text)
+
+        # The tags "Open", "In Progress" and "Done" are shown.
+        self.check_for_header_in_list_table('Open')
+        self.check_for_header_in_list_table('In Progress')
+        self.check_for_header_in_list_table('Done')
+
         # She is invited to enter a to-do item straight away.
         inputbox = self.browser.find_element(By.ID,'id_new_item')
         self.assertEqual(
@@ -54,7 +93,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # When she hits enter, the page updates, and now the page lists 
         # "1: Buy peacock feathers" as an item in a to-do list table
         inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('Buy peacock feathers')
+        self.check_for_row_in_list_table('Buy peacock feathers')
         # There is still a text box inviting her to add another item. She
         # enters "Use peacock feathers to make a fly" (Edith is very
         # methodical)
@@ -63,18 +102,21 @@ class NewVisitorTest(StaticLiveServerTestCase):
         inputbox.send_keys(Keys.ENTER)
 
         # The page updates again, and now shows both items on her list
-        self.wait_for_row_in_list_table('Use peacock feathers to make a fly')
-        self.wait_for_row_in_list_table('Buy peacock feathers')
+        self.check_for_row_in_list_table('Use peacock feathers to make a fly')
+        self.check_for_row_in_list_table('Buy peacock feathers')
 
         # Satisfied, she goes back to sleep
 
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # Edith starts a new to-do list
         self.browser.get(self.live_server_url)
+        inputbox = self.browser.find_element(By.ID,'id_new_list')
+        inputbox.send_keys('Flyfishing List')
+        inputbox.send_keys(Keys.ENTER)
         inputbox = self.browser.find_element(By.ID,'id_new_item')
         inputbox.send_keys('Buy peacock feathers')
         inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('Buy peacock feathers')
+        self.check_for_row_in_list_table('Buy peacock feathers')
 
         # She notices that her list has a unique URL
         edith_list_url = self.browser.current_url
@@ -94,10 +136,13 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # Francis starts a new list by entering a new item. He is less
         # interesting than Edith
+        inputbox = self.browser.find_element(By.ID,'id_new_list')
+        inputbox.send_keys('Francises List')
+        inputbox.send_keys(Keys.ENTER)
         inputbox = self.browser.find_element(By.ID, 'id_new_item')
         inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('Buy milk')
+        self.check_for_row_in_list_table('Buy milk')
 
         # Francis gets his own unique URL
         francis_list_url = self.browser.current_url
@@ -116,15 +161,18 @@ class NewVisitorTest(StaticLiveServerTestCase):
        self.browser.set_window_size(1024, 768)
 
        # She notices the input box is nicely centerd
-       inputbox = self.browser.find_element(By.ID, 'id_new_item')
+       inputbox = self.browser.find_element(By.ID,'id_new_list')
        self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
            512,
            delta=25)
        # She starts a new list and sees the input is nicely centered there too
+       inputbox.send_keys('Flyfishing List')
+       inputbox.send_keys(Keys.ENTER)
+       inputbox = self.browser.find_element(By.ID, 'id_new_item')
        inputbox.send_keys('testing')
        inputbox.send_keys(Keys.ENTER)
-       self.wait_for_row_in_list_table('testing')
+       self.check_for_row_in_list_table('testing')
        inputbox = self.browser.find_element(By.ID, 'id_new_item')
        self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
@@ -143,13 +191,16 @@ class NewVisitorTest(StaticLiveServerTestCase):
     def test_item_state_and_workflow(self):
         # Edith starts a new to-do list and enters two items
         self.browser.get(self.live_server_url)
+        inputbox = self.browser.find_element(By.ID,'id_new_list')
+        inputbox.send_keys('Flyfishing List')
+        inputbox.send_keys(Keys.ENTER)
         item_texts = ['Buy peacock feathers', 'comb peacock feathers']
         for i, item_text in enumerate(item_texts):
             inputbox = self.browser.find_element(By.ID,'id_new_item')
             inputbox.send_keys(item_text)
             inputbox.send_keys(Keys.ENTER)
             item_index = i + 1
-            self.wait_for_row_in_list_table(f'{item_text}')
+            self.check_for_row_in_list_table(f'{item_text}')
 
         # The new items are in the open state
         for i in range(1,3):

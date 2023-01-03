@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
-{% block header_text %}Your To-Do list {% endblock %}
+{% block header_text %}{{ list.name }}{% endblock %}
 {% block form_action %}/lists/{{ list.id }}/add_item{% endblock %}
+{% block form_action_name %}item_text{% endblock %}
+{% block form_action_id %}id_new_item{% endblock %}
+{% block form_action_text %}"Enter a to-do item"{% endblock %}
+
 {% block table %}
     <div id='id_list_table' class="container">
         {% for state_text, item_selection in filtered_items.items %}

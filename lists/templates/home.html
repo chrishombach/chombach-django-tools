@@ -1,3 +1,13 @@
 {% extends 'base.html' %}
 {% block header_text %}Start a new To-Do list {% endblock %}
 {% block form_action %}/lists/new{% endblock %}
+{% block form_action_name %}list_name{% endblock %}
+{% block form_action_id %}id_new_list{% endblock %}
+{% block form_action_text %}"Enter a new to-do list"{% endblock %}
+{% block table %}
+    <div id="id_list_overview_table">
+        <table>
+            <tr><td><h2>To-Do Lists</h2></td></tr>
+        </table>
+    </div>
+{% endblock %}
