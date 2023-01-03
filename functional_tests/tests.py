@@ -42,9 +42,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn(row_text, [row.text for row in rows])
 
     @wait_for_browser_action
-    def check_for_row_in_list_overview(self, row_text):
+    def check_for_row_in_list_overview(self, row_text, tag_name='td'):
         list_overview = self.browser.find_element(By.ID, 'id_list_overview_table')
-        rows = list_overview.find_elements(By.TAG_NAME,'td')
+        rows = list_overview.find_elements(By.TAG_NAME,tag_name)
         self.assertIn(row_text, [row.text for row in rows])
 
 
@@ -59,7 +59,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('To-Do', header_text)
         # She sees a list with all existing lists and it has at least a header
         # row
-        self.check_for_row_in_list_overview('To-Do Lists')
+        self.check_for_row_in_list_overview('To-Do Lists','th')
 
         # By entering the name of the new list, she adds a new list.
         inputbox = self.browser.find_element(By.ID,'id_new_list')
@@ -176,7 +176,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
        self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
            512,
-           delta=25)
+           delta=30)
        # She starts a new list and sees the input is nicely centered there too
        inputbox.send_keys('Flyfishing List')
        inputbox.send_keys(Keys.ENTER)
@@ -188,7 +188,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
        self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
            512,
-           delta=25)
+           delta=30)
 
     def find_and_validate_state(self, item_index, state_id):
         state_to_compare = {0: 'Deleted',

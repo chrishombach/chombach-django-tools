@@ -6,8 +6,8 @@
 {% block form_action_text %}"Enter a new to-do list"{% endblock %}
 {% block table %}
     <div id="id_list_overview_table">
-        <table class="table-condensed">
-            <tr><td colspan="2"><h2>To-Do Lists</h2></td></tr>
+        <table class="table">
+            <tr><th colspan="2">To-Do Lists</th></tr>
             {% for list in lists %}
             <tr><td>{{ list.name }}</td>
                 <td><a id='link_lists_{{ list.id }}' 
