@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class List(models.Model):
-    pass
+    name = models.CharField(max_length = 200, unique=True)
 
 class Item(models.Model):
     class ItemState(models.IntegerChoices):

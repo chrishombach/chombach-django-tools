@@ -18,8 +18,7 @@ def view_list(request, list_id: int):
                                          'states': states})
 
 def new_list(request):
-    list_ = List.objects.create()
-    Item.objects.create(text=request.POST['item_text'], list=list_)
+    list_ = List.objects.create(name=request.POST['list_name'])
     return redirect(f'/lists/{list_.id}/')
 
 def add_item(request, list_id: int):
