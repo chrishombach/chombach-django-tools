@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>New To-Do Item</h1>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" 
+              role="form" 
+              method="POST"
+              action='/lists/{{ list_id }}/add_item'>
+            <div class="form-group">
+                <label for="item-name">Item Name</label>
+                <input class="form-control" 
+                       type="text" 
+                       name="item_text"
+                       placeholder="Name of new Item"
+                       id="id_new_item_text" />
+            </div>
+            <input type="submit" 
+            class="btn btn-warning" 
+            value="Submit"
+            id="id_new_item_submit"/>
+            {% csrf_token %}
+        </form>
+    </div>
+</div>
+{% endblock %}

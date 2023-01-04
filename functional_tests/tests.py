@@ -77,7 +77,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
                                                       'id_new_list_name')
         new_list_name_box.send_keys('Flyfishing List')
 
-        # When she hits enter, she is directed to the lists page with no items
+        # When she hits the submit botton, she is directed to the lists page with no items
         # in it. The name of the list appears in the pages Headerline.
         new_list_submit = self.browser.find_element(By.ID,
                                                     'id_new_list_submit').click()
@@ -95,20 +95,31 @@ class NewVisitorTest(StaticLiveServerTestCase):
             inputbox.text,
             'Enter a to-do item'
         )
+        # She hits the link and gets to a page that asks for the text for the
+        # to-do item
+        inputbox.click()
+        header_text = self.browser.find_element(By.TAG_NAME,'h1').text
+        self.assertEqual('New To-Do Item', header_text)
 
         # She types "Buy peacock feathers" into a text box (Edith's hobby is tying
         # fly-fishing lures)
+        inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
         inputbox.send_keys('Buy peacock feathers')
-        # When she hits enter, the page updates, and now the page lists 
-        # "1: Buy peacock feathers" as an item in a to-do list table
-        inputbox.send_keys(Keys.ENTER)
+        # When she hits the submit botton, the page updates, and now the page lists 
+        # "Buy peacock feathers" as an item in a to-do list table
+        new_item_submit = self.browser.find_element(By.ID,
+                                                    'id_new_item_submit').click()
         self.check_for_row_in_list_table('Buy peacock feathers')
         # There is still a text box inviting her to add another item. She
         # enters "Use peacock feathers to make a fly" (Edith is very
         # methodical)
         inputbox = self.browser.find_element(By.ID,'id_new_item')
+        inputbox.click()
+        inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
         inputbox.send_keys('Use peacock feathers to make a fly')
-        inputbox.send_keys(Keys.ENTER)
+        new_item_submit = self.browser.find_element(By.ID,
+                                                    'id_new_item_submit').click()
+        self.check_for_row_in_list_table('Buy peacock feathers')
 
         # The page updates again, and now shows both items on her list
         self.check_for_row_in_list_table('Use peacock feathers to make a fly')
@@ -130,10 +141,13 @@ class NewVisitorTest(StaticLiveServerTestCase):
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # Edith starts a new to-do list
         self.browser.get(self.live_server_url)
-        inputbox = self.browser.find_element(By.ID,'id_new_list')
+        self.browser.find_element(By.ID,'id_new_list').click()
+        inputbox = self.browser.find_element(By.ID, 'id_new_list_name')
         inputbox.send_keys('Flyfishing List')
-        inputbox.send_keys(Keys.ENTER)
-        inputbox = self.browser.find_element(By.ID,'id_new_item')
+        new_item_submit = self.browser.find_element(By.ID,
+                                                    'id_new_list_submit').click()
+        self.browser.find_element(By.ID,'id_new_item').click()
+        inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
         inputbox.send_keys('Buy peacock feathers')
         inputbox.send_keys(Keys.ENTER)
         self.check_for_row_in_list_table('Buy peacock feathers')
@@ -156,10 +170,13 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # Francis starts a new list by entering a new item. He is less
         # interesting than Edith
-        inputbox = self.browser.find_element(By.ID,'id_new_list')
+        self.browser.find_element(By.ID,'id_new_list').click()
+        inputbox = self.browser.find_element(By.ID, 'id_new_list_name')
         inputbox.send_keys('Francises List')
-        inputbox.send_keys(Keys.ENTER)
-        inputbox = self.browser.find_element(By.ID, 'id_new_item')
+        new_item_submit = self.browser.find_element(By.ID,
+                                                    'id_new_list_submit').click()
+        self.browser.find_element(By.ID,'id_new_item').click()
+        inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
         inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
         self.check_for_row_in_list_table('Buy milk')
@@ -187,11 +204,17 @@ class NewVisitorTest(StaticLiveServerTestCase):
            512,
            delta=30)
        # She starts a new list and sees the input is nicely centered there too
+       inputbox.click()
+       inputbox = self.browser.find_element(By.ID, 'id_new_list_name')
        inputbox.send_keys('Flyfishing List')
-       inputbox.send_keys(Keys.ENTER)
-       inputbox = self.browser.find_element(By.ID, 'id_new_item')
+       new_item_submit = self.browser.find_element(By.ID,
+                                                   'id_new_list_submit').click()
+       self.browser.find_element(By.ID,'id_new_item').click()
+       inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
        inputbox.send_keys('testing')
-       inputbox.send_keys(Keys.ENTER)
+       new_item_submit = self.browser.find_element(By.ID,
+                                                   'id_new_item_submit').click()
+       inputbox = self.browser.find_element(By.ID, 'id_new_item')
        self.check_for_row_in_list_table('testing')
        inputbox = self.browser.find_element(By.ID, 'id_new_item')
        self.assertAlmostEqual(
@@ -212,13 +235,19 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # Edith starts a new to-do list and enters two items
         self.browser.get(self.live_server_url)
         inputbox = self.browser.find_element(By.ID,'id_new_list')
+        inputbox.click()
+        inputbox = self.browser.find_element(By.ID, 'id_new_list_name')
         inputbox.send_keys('Flyfishing List')
-        inputbox.send_keys(Keys.ENTER)
+        new_item_submit = self.browser.find_element(By.ID,
+                                                    'id_new_list_submit').click()
         item_texts = ['Buy peacock feathers', 'comb peacock feathers']
         for i, item_text in enumerate(item_texts):
             inputbox = self.browser.find_element(By.ID,'id_new_item')
+            inputbox.click()
+            inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
             inputbox.send_keys(item_text)
-            inputbox.send_keys(Keys.ENTER)
+            new_item_submit = self.browser.find_element(By.ID,
+                                                    'id_new_item_submit').click()
             item_index = i + 1
             self.check_for_row_in_list_table(f'{item_text}')
 

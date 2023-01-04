@@ -92,6 +92,7 @@ class NewListTest(TestCase):
         self.assertRedirects(response, f'/lists/{new_list.id}/')
 
 class ItemTest(TestCase):
+
     def add_new_item_to_existing_list(self, list_):
         return self.client.post(
             f'/lists/{list_.id}/add_item',
@@ -105,6 +106,11 @@ class ItemTest(TestCase):
         return list_, new_item
 
 class NewItemTest(ItemTest):
+
+    def test_new_item_form_returns_correct_html(self):
+        list_ = List.objects.create(name='New List')
+        response = self.client.get(f'/lists/{list_.id}/add_item_form')
+        self.assertTemplateUsed(response, 'new_form_item.html')
 
     def test_can_save_a_POST_request_to_an_existing_list(self):
         other_list = List.objects.create(name='Other List')
