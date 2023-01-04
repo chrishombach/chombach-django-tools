@@ -66,6 +66,10 @@ class ListViewTest(TestCase):
         self.assertEqual(response.context['list'], correct_list)
 
 class NewListTest(TestCase):
+    def test_new_list_form_returns_correct_html(self):
+        response = self.client.get('/lists/new_form')
+        self.assertTemplateUsed(response, 'new_form_list.html')
+
 
     def test_can_create_new_list(self):
         self.client.post('/lists/new', data={'list_name' : 'A new list'})
@@ -176,7 +180,7 @@ class ItemStateTest(ItemTest):
         new_item = Item.objects.get(id = new_item.id)
         self.assertEqual(new_item.state, 0) 
         self.assertEqual(new_item.state_text, 'Deleted')
-        
+
     def test_redirect_after_delete_item(self):
         new_list, new_item = self.get_new_list_and_new_item()
         response = self.client.post(f'/lists/{new_list.id}/{new_item.id}/delete_item')

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>New To-Do List</h1>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" role="form" method="POST"
+                     action='/lists/new'>
+            <div class="form-group">
+                <label for="list-name">List Name</label>
+                <input class="form-control" 
+                       type="text" 
+                       name="list_name"
+                       placeholder="Name of new List"
+                       id="id_new_list_name" />
+            </div>
+            <input type="submit" 
+            class="btn btn-warning" 
+            value="Submit"
+            id="id_new_list_submit"/>
+            {% csrf_token %}
+        </form>
+    </div>
+</div>
+{% endblock %}

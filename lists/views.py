@@ -18,6 +18,11 @@ def view_list(request, list_id: int):
                                          'filtered_items': filtered_items,
                                          'states': states})
 
+def new_list_form(request):
+    if request.GET.get('new_list_submit'):
+        return redirect('/lists/new')
+    return render(request, 'new_form_list.html')
+
 def new_list(request):
     list_ = List.objects.create(name=request.POST['list_name'])
     return redirect(f'/lists/{list_.id}/')

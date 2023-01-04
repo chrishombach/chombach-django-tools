@@ -61,17 +61,26 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # row
         self.check_for_row_in_list_overview('To-Do Lists','th')
 
-        # By entering the name of the new list, she adds a new list.
-        inputbox = self.browser.find_element(By.ID,'id_new_list')
+        # She finds a field called "Add new List", which she clicks on and
+        # finds herself on the new list input form 
+        new_list_link = self.browser.find_element(By.ID,'id_new_list')
         self.assertEqual(
-            inputbox.get_attribute('placeholder'),
-            'Enter a new to-do list'
+            new_list_link.text, 'Add new To-Do List'
         )
-        inputbox.send_keys('Flyfishing List')
+        new_list_link.click()
+        header_text = self.browser.find_element(By.TAG_NAME,'h1').text
+        self.assertEqual('New To-Do List', header_text)
+
+        # She is asked to enter the name of the new list, so she enteres
+        # "Flyfishing List".
+        new_list_name_box = self.browser.find_element(By.ID,
+                                                      'id_new_list_name')
+        new_list_name_box.send_keys('Flyfishing List')
 
         # When she hits enter, she is directed to the lists page with no items
         # in it. The name of the list appears in the pages Headerline.
-        inputbox.send_keys(Keys.ENTER)
+        new_list_submit = self.browser.find_element(By.ID,
+                                                    'id_new_list_submit').click()
         header_text = self.browser.find_element(By.TAG_NAME,'h1').text
         self.assertIn('Flyfishing List', header_text)
 
@@ -83,7 +92,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # She is invited to enter a to-do item straight away.
         inputbox = self.browser.find_element(By.ID,'id_new_item')
         self.assertEqual(
-            inputbox.get_attribute('placeholder'),
+            inputbox.text,
             'Enter a to-do item'
         )
 

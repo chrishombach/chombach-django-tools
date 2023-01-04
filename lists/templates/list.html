@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'base_data.html' %}
 {% block header_text %}{{ list.name }}{% endblock %}
-{% block form_action %}/lists/{{ list.id }}/add_item{% endblock %}
+{% block form_action %}{% url 'add_item' list.id %}{% endblock %}
 {% block form_action_name %}item_text{% endblock %}
 {% block form_action_id %}id_new_item{% endblock %}
-{% block form_action_text %}"Enter a to-do item"{% endblock %}
+{% block form_action_text %}Enter a to-do item{% endblock %}
 
 {% block table %}
     <div id='id_list_table' class="container">
