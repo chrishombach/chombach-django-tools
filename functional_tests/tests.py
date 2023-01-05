@@ -47,6 +47,15 @@ class NewVisitorTest(StaticLiveServerTestCase):
         rows = list_overview.find_elements(By.TAG_NAME,tag_name)
         self.assertIn(row_text, [row.text for row in rows])
 
+    def add_new_item(self, 
+                     item_text:str='Buy peacock feathers') -> None:
+        # Assumes you are on the list view and hit the Add item link.
+        inputbox = self.browser.find_element(By.ID,'id_new_item')
+        inputbox.click()
+        inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
+        inputbox.send_keys(item_text)
+        new_item_submit = self.browser.find_element(By.ID,
+                                                    'id_new_item_submit').click()
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         # Edith has heard about a cool new online to-do app. She goes to check out its
@@ -113,14 +122,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # There is still a text box inviting her to add another item. She
         # enters "Use peacock feathers to make a fly" (Edith is very
         # methodical)
-        inputbox = self.browser.find_element(By.ID,'id_new_item')
-        inputbox.click()
-        inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
-        inputbox.send_keys('Use peacock feathers to make a fly')
-        new_item_submit = self.browser.find_element(By.ID,
-                                                    'id_new_item_submit').click()
-        self.check_for_row_in_list_table('Buy peacock feathers')
-
+        self.add_new_item(item_text='Use peacock feathers to make a fly')
         # The page updates again, and now shows both items on her list
         self.check_for_row_in_list_table('Use peacock feathers to make a fly')
         self.check_for_row_in_list_table('Buy peacock feathers')
@@ -146,10 +148,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         inputbox.send_keys('Flyfishing List')
         new_item_submit = self.browser.find_element(By.ID,
                                                     'id_new_list_submit').click()
-        self.browser.find_element(By.ID,'id_new_item').click()
-        inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
-        inputbox.send_keys('Buy peacock feathers')
-        inputbox.send_keys(Keys.ENTER)
+        self.add_new_item()
         self.check_for_row_in_list_table('Buy peacock feathers')
 
         # She notices that her list has a unique URL
@@ -175,10 +174,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         inputbox.send_keys('Francises List')
         new_item_submit = self.browser.find_element(By.ID,
                                                     'id_new_list_submit').click()
-        self.browser.find_element(By.ID,'id_new_item').click()
-        inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
-        inputbox.send_keys('Buy milk')
-        inputbox.send_keys(Keys.ENTER)
+        self.add_new_item(item_text='Buy milk')
         self.check_for_row_in_list_table('Buy milk')
 
         # Francis gets his own unique URL
@@ -209,11 +205,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
        inputbox.send_keys('Flyfishing List')
        new_item_submit = self.browser.find_element(By.ID,
                                                    'id_new_list_submit').click()
-       self.browser.find_element(By.ID,'id_new_item').click()
-       inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
-       inputbox.send_keys('testing')
-       new_item_submit = self.browser.find_element(By.ID,
-                                                   'id_new_item_submit').click()
+       self.add_new_item(item_text='testing')
        inputbox = self.browser.find_element(By.ID, 'id_new_item')
        self.check_for_row_in_list_table('testing')
        inputbox = self.browser.find_element(By.ID, 'id_new_item')
@@ -242,14 +234,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
                                                     'id_new_list_submit').click()
         item_texts = ['Buy peacock feathers', 'comb peacock feathers']
         for i, item_text in enumerate(item_texts):
-            inputbox = self.browser.find_element(By.ID,'id_new_item')
-            inputbox.click()
-            inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
-            inputbox.send_keys(item_text)
-            new_item_submit = self.browser.find_element(By.ID,
-                                                    'id_new_item_submit').click()
+            self.add_new_item(item_text=item_text)
             item_index = i + 1
-            self.check_for_row_in_list_table(f'{item_text}')
+            self.check_for_row_in_list_table(item_text)
 
         # The new items are in the open state
         for i in range(1,3):
