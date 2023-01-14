@@ -11,7 +11,10 @@ MAX_WAIT = 10
 class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
-        self.browser = webdriver.Chrome()
+        try:
+            self.browser = webdriver.Chrome()
+        except WebDriverException:
+            self.browser = webdriver.Chrome('/usr/bin/chromedriver')
 
     def tearDown(self):
         self.browser.quit()
