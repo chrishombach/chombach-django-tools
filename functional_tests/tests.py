@@ -234,7 +234,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
                            4: 'Urgent'}[prio_id]
         prio = self.browser.find_element(By.ID,
                                          f'id_item_{item_index}_{prio_id}_prio').text
-        self.assertEqual(state, state_to_compare)
+        self.assertEqual(prio, prio_to_compare)
 
     def test_item_state_and_workflow(self):
         # Edith starts a new to-do list and enters two items

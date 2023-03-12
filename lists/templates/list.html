@@ -16,7 +16,8 @@
             <table class="table-condensed">
             <tr><td colspan="3">{{ item.text }}</td>
             </tr><tr>
-                <td colspan="3" id='id_item_{{ forloop.counter }}_{{ state_id }}_state'>{{item.state_text }}</td>
+                <td colspan="1" id='id_item_{{ forloop.counter }}_{{ state_id }}_state'>{{item.state_text }}</td>
+                <td colspan="2" id='id_item_{{ forloop.counter }}_{{ state_id }}_prio'>{{item.prio_text }}</td>
             </tr><tr>
             {% if item.state > 1 %}
             <td> <a id='id_item_{{ forloop.counter }}_{{ state_id }}_state_down' 
