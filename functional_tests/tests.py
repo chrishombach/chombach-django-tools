@@ -226,6 +226,16 @@ class NewVisitorTest(StaticLiveServerTestCase):
                                           f'id_item_{item_index}_{state_id}_state').text
         self.assertEqual(state, state_to_compare)
 
+    def find_and_validate_prio(self, item_index, prio_id):
+        prio_to_compare = {0: 'Very Low',
+                           1: 'Low',
+                           2: 'High',
+                           3: 'Very High',
+                           4: 'Urgent'}[prio_id]
+        prio = self.browser.find_element(By.ID,
+                                         f'id_item_{item_index}_{prio_id}_prio').text
+        self.assertEqual(state, state_to_compare)
+
     def test_item_state_and_workflow(self):
         # Edith starts a new to-do list and enters two items
         self.browser.get(self.live_server_url)
@@ -268,3 +278,18 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         self.browser.find_element(By.ID, 'id_item_1_1_delete_item').click()
         #self.find_and_validate_state(1, 0)
+
+    def test_item_prio(self):
+        # Edith starts a new to-do list and enters a new item
+        self.browser.get(self.live_server_url)
+        inputbox = self.browser.find_element(By.ID,'id_new_list')
+        inputbox.click()
+        inputbox = self.browser.find_element(By.ID, 'id_new_list_name')
+        inputbox.send_keys('Flyfishing List')
+        new_item_submit = self.browser.find_element(By.ID,
+                                                    'id_new_list_submit').click()
+        # She adds a item that has a default prio of low
+        self.add_new_item(item_text='Low Prio item')
+        self.check_for_row_in_list_table('Low Prio item')
+        self.find_and_validate_prio(1,1)
+        
