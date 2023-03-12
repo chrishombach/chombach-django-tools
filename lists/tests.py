@@ -191,3 +191,8 @@ class ItemStateTest(ItemTest):
         new_list, new_item = self.get_new_list_and_new_item()
         response = self.client.post(f'/lists/{new_list.id}/{new_item.id}/delete_item')
         self.assertRedirects(response, f'/lists/{new_list.id}/')
+
+class ItemPrioTest(ItemTest):
+    def test_new_item_has_prio_low(self):
+        _, new_item = self.get_new_list_and_new_item()
+        self.assertEqual(new_item.prio, 1)
