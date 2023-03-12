@@ -196,3 +196,4 @@ class ItemPrioTest(ItemTest):
     def test_new_item_has_prio_low(self):
         _, new_item = self.get_new_list_and_new_item()
         self.assertEqual(new_item.prio, 1)
+        self.assertEqual(new_item.prio_text, 'Low')
