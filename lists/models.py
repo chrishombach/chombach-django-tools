@@ -10,11 +10,15 @@ class Item(models.Model):
         IN_PROGRESS = 2
         DONE = 3
         DELETED = 0
+    class PrioState(models.IntegerChoices):
+        LOW = 1
     text = models.TextField(default='')
     list = models.ForeignKey(List, default='', on_delete=models.CASCADE)
     state = models.IntegerField(choices=ItemState.choices,
                                default=ItemState.OPEN)
     state_text = models.CharField(max_length=12,default='')
+    prio = models.IntegerField(choices=PrioState.choices,
+                               default=PrioState.LOW)
     def save(self, *args, **kwargs):
         try:
             self.state_text = dict(zip(self.ItemState.values, self.ItemState.labels))[self.state]
