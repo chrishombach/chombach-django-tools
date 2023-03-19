@@ -51,12 +51,15 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn(row_text, [row.text for row in rows])
 
     def add_new_item(self, 
-                     item_text:str='Buy peacock feathers') -> None:
+                     item_text:str='Buy peacock feathers',
+                     prio:str='Low') -> None:
         # Assumes you are on the list view and hit the Add item link.
         inputbox = self.browser.find_element(By.ID,'id_new_item')
         inputbox.click()
         inputbox = self.browser.find_element(By.ID, 'id_new_item_text')
         inputbox.send_keys(item_text)
+        inputbox = self.browser.find_element(By.ID, 'id_new_item_prio')
+        inputbox.send_keys(prio)
         new_item_submit = self.browser.find_element(By.ID,
                                                     'id_new_item_submit').click()
 
@@ -292,4 +295,11 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.add_new_item(item_text='Low Prio item')
         self.check_for_row_in_list_table('Low Prio item')
         self.find_and_validate_prio(1,1)
+
+        # She adds an item that has prio high
+        self.add_new_item(item_text='High Prio item',
+                          prio='High')
+        self.check_for_row_in_list_table('High Prio item')
+        self.find_and_validate_prio(2,2)
+
         
