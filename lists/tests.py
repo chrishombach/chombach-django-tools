@@ -200,11 +200,11 @@ class ItemPrioTest(ItemTest):
 
     def test_possible_prios(self):
         _, new_item = self.get_new_list_and_new_item()
-        for i, prio in ((0, 'VERY LOW'),
-                        (1, 'LOW'),
-                        (2, 'HIGH'),
-                        (3, 'VERY HIGH'),
-                        (4, 'URGENT')):
+        for i, prio in ((0, 'Very Low'),
+                        (1, 'Low'),
+                        (2, 'High'),
+                        (3, 'Very High'),
+                        (4, 'Urgent')):
            new_item.prio = i
            new_item.save()
-           self.assertEqual(new_item.prio_text == prio)
+           self.assertEqual(new_item.prio_text, prio)

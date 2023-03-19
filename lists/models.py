@@ -11,7 +11,11 @@ class Item(models.Model):
         DONE = 3
         DELETED = 0
     class PrioState(models.IntegerChoices):
+        VERY_LOW = 0
         LOW = 1
+        HIGH = 2
+        VERY_HIGH = 3
+        URGENT = 4
     text = models.TextField(default='')
     list = models.ForeignKey(List, default='', on_delete=models.CASCADE)
     state = models.IntegerField(choices=ItemState.choices,
