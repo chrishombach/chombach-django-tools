@@ -30,11 +30,17 @@ def new_list(request):
 def add_item_form(request, list_id: int):
     if request.GET.get('add_item_submit'):
         return redirect(f'/lists/{list_id}/add_item')
-    return render(request, 'new_form_item.html', {'list_id': list_id})
+    prios_choice = enumerate(Item.ItemPrio.labels)
+    return render(request, 'new_form_item.html', {'list_id': list_id,
+                                                  'prios_choice': prios_choice})
 
 def add_item(request, list_id: int):
     list_ = List.objects.get(id=list_id)
-    Item.objects.create(text=request.POST['item_text'], list=list_)
+    prio_ = int(request.POST['prio_id'])
+    name = request.POST['item_text']
+    Item.objects.create(text=name,
+                        prio=prio_,
+                        list=list_)
     return redirect(f'/lists/{list_.id}/')
 
 def state_up(request, list_id: int, item_id: int):

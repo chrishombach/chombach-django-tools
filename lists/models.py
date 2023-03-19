@@ -10,7 +10,7 @@ class Item(models.Model):
         IN_PROGRESS = 2
         DONE = 3
         DELETED = 0
-    class PrioState(models.IntegerChoices):
+    class ItemPrio(models.IntegerChoices):
         VERY_LOW = 0
         LOW = 1
         HIGH = 2
@@ -21,8 +21,8 @@ class Item(models.Model):
     state = models.IntegerField(choices=ItemState.choices,
                                default=ItemState.OPEN)
     state_text = models.CharField(max_length=12,default='')
-    prio = models.IntegerField(choices=PrioState.choices,
-                               default=PrioState.LOW)
+    prio = models.IntegerField(choices=ItemPrio.choices,
+                               default=ItemPrio.LOW)
     prio_text = models.CharField(max_length=12,default='')
     def save(self, *args, **kwargs):
         try:
@@ -30,7 +30,7 @@ class Item(models.Model):
         except KeyError:
             raise KeyError( f'No state with State ID {self.state} defined!')
         try:
-            self.prio_text = dict(zip(self.PrioState.values, self.PrioState.labels))[self.prio]
+            self.prio_text = dict(zip(self.ItemPrio.values, self.ItemPrio.labels))[self.prio]
         except KeyError:
             raise KeyError( f'No prio with Prio ID {self.prio} defined!')
         super(Item, self).save(*args, **kwargs)

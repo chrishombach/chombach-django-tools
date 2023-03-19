@@ -229,14 +229,14 @@ class NewVisitorTest(StaticLiveServerTestCase):
                                           f'id_item_{item_index}_{state_id}_state').text
         self.assertEqual(state, state_to_compare)
 
-    def find_and_validate_prio(self, item_index, prio_id):
+    def find_and_validate_prio(self, item_index, state_id, prio_id):
         prio_to_compare = {0: 'Very Low',
                            1: 'Low',
                            2: 'High',
                            3: 'Very High',
                            4: 'Urgent'}[prio_id]
         prio = self.browser.find_element(By.ID,
-                                         f'id_item_{item_index}_{prio_id}_prio').text
+                                         f'id_item_{item_index}_{state_id}_prio').text
         self.assertEqual(prio, prio_to_compare)
 
     def test_item_state_and_workflow(self):
@@ -294,12 +294,12 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # She adds a item that has a default prio of low
         self.add_new_item(item_text='Low Prio item')
         self.check_for_row_in_list_table('Low Prio item')
-        self.find_and_validate_prio(1,1)
+        self.find_and_validate_prio(1,1,1)
 
         # She adds an item that has prio high
         self.add_new_item(item_text='High Prio item',
                           prio='High')
         self.check_for_row_in_list_table('High Prio item')
-        self.find_and_validate_prio(2,2)
+        self.find_and_validate_prio(2,1,2)
 
         
